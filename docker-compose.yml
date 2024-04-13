@@ -3,13 +3,12 @@ version: "3.8"
 services:
   mongo:
     image: mongo:7.0
-    env_file: .env
+    env_file:
+      - .env
     environment:
       - MONGO_INITDB_ROOT_USERNAME=$MONGODB_USER
       - MONGO_INITDB_ROOT_PASSWORD=$MONGODB_PASSWORD
-    # environment:
-    #   MONGO_INITDB_ROOT_USERNAME: admin
-    #   MONGO_INITDB_ROOT_PASSWORD: admin
+      - MONGO_INITDB_DATABASE=$MONGODB_DATABASE
     ports:
       - 27018:27017
     volumes:
