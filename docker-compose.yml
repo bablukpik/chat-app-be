@@ -1,18 +1,33 @@
-version: "3.8"
+version: "3.9"
 
 services:
+  chat-app-be:
+    build: ./
+    env_file:
+      - path: ./.env
+        required: true
+    environment:
+      - IS_DOCKER=true
+    ports:
+      - "${PORT}:${PORT}"
+    depends_on:
+      - mongo
+    restart: always
+
   mongo:
     image: mongo:7.0
     env_file:
-      - .env
+      - path: ./.env
+        required: true
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=$MONGODB_USER
-      - MONGO_INITDB_ROOT_PASSWORD=$MONGODB_PASSWORD
-      - MONGO_INITDB_DATABASE=$MONGODB_DATABASE
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGODB_DATABASE}
     ports:
-      - 27018:27017
+      - ${MONGODB_PORT}:27017
     volumes:
       - mongodata:/data/db
+
 volumes:
   mongodata:
-    driver: local
+    name: mongodata
