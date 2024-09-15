@@ -3,6 +3,7 @@ const express = require("express");
 const http = require("http");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const httpStatus = require("http-status");
 const socketServer = require("./socketServer");
 const authRoutes = require("./routes/authRoutes");
 const friendInvitationRoutes = require("./routes/friendInvitationRoutes");
@@ -16,12 +17,12 @@ const {
   IS_DOCKER,
 } = process.env;
 
-const MONGODB_HOST_DOCKER = 'mongo';
-const MONGODB_HOST_LOCAL = MONGODB_HOST || 'localhost';
-const DB_HOST = IS_DOCKER === 'true' ? MONGODB_HOST_DOCKER : MONGODB_HOST_LOCAL;
+const MONGODB_HOST_DOCKER = "mongo";
+const MONGODB_HOST_LOCAL = MONGODB_HOST || "localhost";
+const DB_HOST = IS_DOCKER === "true" ? MONGODB_HOST_DOCKER : MONGODB_HOST_LOCAL;
 
 const MONGODB_URI = `mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@${DB_HOST}:${MONGODB_PORT}/${MONGODB_DATABASE}?authSource=admin`;
-const PORT = process.env.PORT || 5002;
+const PORT = process.env.PORT || 5000;
 
 const app = express();
 
@@ -56,6 +57,14 @@ mongoose
     process.exit(1);
   });
 
-// register the routes
+// A root route
+app.get("/", (_, res) => {
+  return res.status(httpStatus.FORBIDDEN).json({
+    success: false,
+    message: "Access denied. Insufficient permissions!",
+  });
+});
+
+// Other routes
 app.use("/api/auth", authRoutes);
 app.use("/api/friend-invitation", friendInvitationRoutes);

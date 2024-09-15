@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   chat-app-be:
     build: ./
@@ -8,11 +6,15 @@ services:
         required: true
     environment:
       - IS_DOCKER=true
+    networks:
+      - chat-app-network
     ports:
       - "${PORT}:${PORT}"
     depends_on:
       - mongo
     restart: always
+    volumes:
+      - ./:/app
 
   mongo:
     image: mongo:7.0
@@ -23,6 +25,8 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
       MONGO_INITDB_DATABASE: ${MONGODB_DATABASE}
+    networks:
+      - chat-app-network
     ports:
       - ${MONGODB_PORT}:27017
     volumes:
@@ -31,3 +35,7 @@ services:
 volumes:
   mongodata:
     name: mongodata
+
+networks:
+  chat-app-network:
+    external: true
